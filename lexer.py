@@ -28,3 +28,6 @@ class Lexer:
     #Regresar el siguiente token.
     def getToken(self):
         pass
+
+def test():
+    return print("import lexer.py :)")
