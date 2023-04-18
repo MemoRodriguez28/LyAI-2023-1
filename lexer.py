@@ -13,6 +13,7 @@ class Lexer:
     #Regresar el caracter adelante (lookahead).
     def asomar(self):
         pass
+    
     #Token inválido, imprimir error y salir.
     def abortar(self, message):
         pass
