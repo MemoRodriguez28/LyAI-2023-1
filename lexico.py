@@ -8,11 +8,18 @@ class Lexico:
 
     #Leer el siguiente caracter.
     def siguiente(self):
-        pass
+        self.posActual += 1 #Posición actual = 7 (8)
+        if self.posActual >= len(self.fuente):
+            self.carActual = '\0' #End of file EOP
+        else:
+            self.carActual = self.fuente[self.posActual] 
 
     #Regresar el caracter adelante (lookahead).
     def asomar(self):
-        pass
+        #self.posActual += 1
+        if self.posActual + 1 >= len(self.fuente):
+            return '\0'
+        return self.fuente[self.posActual + 1]
     
     #Token inválido, imprimir error y salir.
     def abortar(self, message):
