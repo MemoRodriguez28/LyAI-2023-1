@@ -1,3 +1,3 @@
-from lexer import *
+from lexico import *
 print("hello world")
 test()
