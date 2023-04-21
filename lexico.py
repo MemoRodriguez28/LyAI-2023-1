@@ -1,4 +1,4 @@
-import enum
+import enum, sys
 class Lexico:
     def __init__(self, fuente):
         #Se pasa el código fuente como cadena. Se le agrega newline para simplificar el análisis para el último token/sentencia.
@@ -23,8 +23,8 @@ class Lexico:
         return self.fuente[self.posActual + 1]
     
     #Token inválido, imprimir error y salir.
-    def abortar(self, message):
-        pass #Todavia no
+    def abortar(self, mensaje):
+        sys.exit("Error lexico: " + mensaje)
 
     #Saltar espacios excepto \n, estas se utilizarán para indicar el final de una sentencia.
     def saltarEspacios(self):
@@ -41,12 +41,36 @@ class Lexico:
     
     #Regresar el siguiente token.
     def getToken(self):
-        pass
+        token = None #var Auxiliar
+        #Revisar si los caracteres sencillos coinciden
+        if self.carActual == '+':
+            token = Token(self.carActual, TipoToken.PLUS)
+        elif self.carActual == '-':
+            token = Token(self.carActual, TipoToken.MINUS)
+        elif self.carActual == '*':
+            token = Token(self.carActual, TipoToken.ASTERISK)   
+        elif self.carActual == '/':
+            token = Token(self.carActual, TipoToken.SLASH)
+        elif self.carActual == '\0':
+            token = Token(self.carActual, TipoToken.EOF)
+        elif self.carActual == '\n':
+            token = Token(self.carActual, TipoToken.NEWLINE)
+        else:
+            self.abortar("El token '" + self.carActual + "' es desconocido")  
+             
+        #Si ya se identifico el token, debemos leer el siguiente caracter
+        self.siguiente()
+        return token
+               
+class Token:
+    def __init__(self, lexema, token):
+        self.lexema = lexema
+        self.token = token #TipoToken ENUM     
     
 class TipoToken(enum.Enum):
     #Escribir todos los tokens
-    EOF = -1 #End of file
-    NEWLINE = 0 
+    EOF = -1 #End of file #\n
+    NEWLINE = 0 #\n
     NUMERO = 1
     ID = 2
     STRING = 3
@@ -63,17 +87,17 @@ class TipoToken(enum.Enum):
     REPEAT = 110
     ENDWHILE = 111
     #Operadores
-    EQ = 201
-    PLUS = 202
-    MINUS = 203
-    ASTERISK = 204
-    SLASH = 205
-    EQEQ = 206
-    NOTEQ = 207
-    LT = 208
-    LTEQ = 209
-    GT = 210
-    GTEQ = 211
+    EQ = 201 #=
+    PLUS = 202 #+ 1
+    MINUS = 203 #- 1
+    ASTERISK = 204 #* 1
+    SLASH = 205 #/ 1
+    EQEQ = 206 #==
+    NOTEQ = 207 #!= 1
+    LT = 208 #<
+    LTEQ = 209 #<= 
+    GT = 210 #>
+    GTEQ = 211 #>=
     
 
 def test():
