@@ -1,11 +1,10 @@
 from lexico import *
 
-fuente = "PRINT a" #Longitud es 7
-lexico = Lexico(fuente)
+codigo = "+*-/"
 
-#while len(fuente) != None:
-#    lexico.siguiente()
-
-while lexico.asomar() != '\0':
-    print(lexico.carActual)
-    lexico.siguiente()
+lexico = Lexico(codigo)
+token = lexico.getToken()
+#Siempre y cuando no sea EOF, continuar leyendo tokens
+while token.token != TipoToken.EOF:
+    print(token.token)
+    token = lexico.getToken()
