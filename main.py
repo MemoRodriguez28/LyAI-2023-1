@@ -1,6 +1,6 @@
 from lexico import *
 
-codigo = "+*-/"
+codigo = "<= == + * != - / >= 12.3"
 
 lexico = Lexico(codigo)
 token = lexico.getToken()
@@ -8,3 +8,4 @@ token = lexico.getToken()
 while token.token != TipoToken.EOF:
     print(token.token)
     token = lexico.getToken()
+    
