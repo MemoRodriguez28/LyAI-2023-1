@@ -41,6 +41,8 @@ class Lexico:
     
     #Regresar el siguiente token.
     def getToken(self):
+        self.saltarEspacios()
+        self.saltarComentarios()
         token = None #var Auxiliar
         #Revisar si los caracteres sencillos coinciden
         if self.carActual == '+':
@@ -55,6 +57,53 @@ class Lexico:
             token = Token(self.carActual, TipoToken.EOF)
         elif self.carActual == '\n':
             token = Token(self.carActual, TipoToken.NEWLINE)
+        elif self.carActual == '=':
+            #Asomar nos regresa un caracter
+            if self.asomar() == '=': #==
+                carAnterior = self.carActual #=1 carAnterior = '='1
+                self.siguiente() #
+                token = Token(carAnterior + self.carActual, TipoToken.EQEQ)
+            else:
+                token = Token(self.carActual, TipoToken.EQ)
+        elif self.carActual == '<':
+            #Asomar nos regresa un caracter
+            if self.asomar() == '=': #==
+                carAnterior = self.carActual #=1 carAnterior = '='1
+                self.siguiente() #
+                token = Token(carAnterior + self.carActual, TipoToken.LTEQ)
+            else:
+                token = Token(self.carActual, TipoToken.LT)
+        elif self.carActual == '>':
+            #Asomar nos regresa un caracter
+            if self.asomar() == '=': #==
+                carAnterior = self.carActual #=1 carAnterior = '='1
+                self.siguiente() #
+                token = Token(carAnterior + self.carActual, TipoToken.GTEQ)
+            else:
+                token = Token(self.carActual, TipoToken.GT)
+        elif self.carActual == '!':
+            if self.asomar() == '=': #!=
+                carAnterior = self.carActual
+                self.siguiente() 
+                token = Token(carAnterior + self.carActual, TipoToken.NOTEQ)
+            else:
+                self.abortar("Se esperaba '!=' y se detuvo '!'.")
+        elif self.carActual.isdigit(): 
+            posNumInicial = self.posActual 
+            while self.asomar().isdigit():
+                self.siguiente()
+            if self.asomar() == '.': #Punto decimal
+                self.siguiente()
+                if not self.asomar().isdigit(): #Si no es digito
+                    self.abortar("Caracter ilegal en numero")
+                while self.asomar().isdigit():
+                    self.siguiente()
+            #Regresa el lexema completo posNumInicial hast posActual
+            #Obtener la subcadena del codigo fuente
+            lexema = self.fuente[posNumInicial : self.posActual+1]
+            token = Token(lexema, TipoToken.NUMERO)
+                          
+        #Token desconocido        
         else:
             self.abortar("El token '" + self.carActual + "' es desconocido")  
              
@@ -87,17 +136,17 @@ class TipoToken(enum.Enum):
     REPEAT = 110
     ENDWHILE = 111
     #Operadores
-    EQ = 201 #=
-    PLUS = 202 #+ 1
-    MINUS = 203 #- 1
-    ASTERISK = 204 #* 1
-    SLASH = 205 #/ 1
-    EQEQ = 206 #==
-    NOTEQ = 207 #!= 1
-    LT = 208 #<
-    LTEQ = 209 #<= 
-    GT = 210 #>
-    GTEQ = 211 #>=
+    EQ = 201 #= 2
+    PLUS = 202 #+ 
+    MINUS = 203 #- 
+    ASTERISK = 204 #* 
+    SLASH = 205 #/ 
+    EQEQ = 206 #== 2
+    NOTEQ = 207 #!= 2
+    LT = 208 #< 2
+    LTEQ = 209 #<= 2
+    GT = 210 #> 2
+    GTEQ = 211 #>= 2
     
 
 def test():
