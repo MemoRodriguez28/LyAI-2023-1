@@ -102,7 +102,7 @@ class Lexico:
             #Obtener la subcadena del codigo fuente
             lexema = self.fuente[posNumInicial : self.posActual+1]
             token = Token(lexema, TipoToken.NUMERO)
-                          
+              
         #Token desconocido        
         else:
             self.abortar("El token '" + self.carActual + "' es desconocido")  
@@ -120,7 +120,7 @@ class TipoToken(enum.Enum):
     #Escribir todos los tokens
     EOF = -1 #End of file #\n
     NEWLINE = 0 #\n
-    NUMERO = 1
+    NUMERO = 1 #si
     ID = 2
     STRING = 3
     #Keywords
