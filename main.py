@@ -1,6 +1,6 @@
 from lexico import *
 
-codigo = "<= == + * != - / >= 12.3 pedro"
+codigo = "<= == + * != - / >= 12.3 pepe"
 
 lexico = Lexico(codigo)
 token = lexico.getToken()
