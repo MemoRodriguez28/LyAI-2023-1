@@ -102,6 +102,12 @@ class Lexico:
             #Obtener la subcadena del codigo fuente
             lexema = self.fuente[posNumInicial : self.posActual+1]
             token = Token(lexema, TipoToken.NUMERO)
+        elif self.carActual.isalpha():
+            pospalInicial = self.posActual
+            while self.asomar().isalpha():
+                self.siguiente()
+            lexema = self.fuente[pospalInicial : self.posActual+1]
+            token = Token(lexema, TipoToken.STRING)
               
         #Token desconocido        
         else:
