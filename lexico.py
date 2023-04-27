@@ -155,7 +155,7 @@ class Token:
         #Usar la enumeracion: TipoToken.name(nombre); TipoToken.value(numeros)
         for tipo in TipoToken:
             if tipo.name == lexema and tipo.value > 100 and tipo.value < 200:
-                return lexema
+                return tipo
         return None    
     
 class TipoToken(enum.Enum):
