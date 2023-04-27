@@ -98,11 +98,13 @@ class Lexico:
                     self.abortar("Caracter ilegal en numero")
                 while self.asomar().isdigit():
                     self.siguiente()
-            #Regresa el lexema completo posNumInicial hast posActual
+            #Regresa el lexema completo posNumInicial hasta posActual
             #Obtener la subcadena del codigo fuente
             lexema = self.fuente[posNumInicial : self.posActual+1]
             token = Token(lexema, TipoToken.NUMERO)
             
+        #Imprime solo la palabra pero no identifica las comillas
+        #El isalpha se utliza para leer palabras
         #elif self.carActual.isalpha():
             #pospalInicial = self.posActual
             #while self.asomar().isalpha():
@@ -110,19 +112,31 @@ class Lexico:
             #lexema = self.fuente[pospalInicial : self.posActual+1]
             #token = Token(lexema, TipoToken.STRING)
             
-        #elif self.carActual =='"':
-            #Poslet=self.posActual
-            #while self.asomar().__str__():
-                #self.siguiente()
-                #if self.asomar()=='\n' '\r' '\t' '\\' '%':
-                    #self.abortar("Invalido") 
-            #if self.asomar()=='"':
-                #self.siguiente()
-                #if not self.asomar()=='"':
-                    #self.abortar("Comillas esperando")
-                    
-            #lexema=self.fuente[Poslet:self.posActual+1]   
-            #token=Token(lexema, TipoToken.STRING)
+        elif self.carActual=='\"':
+            #Obtener caracteres DESPUES de las COMILLAS
+            self.siguiente()
+            posStrInicial = self.posActual #Aqui comenzamos a leer contenidos
+            while self.carActual != '\"': #Esto significa que la cadena ya termino
+                #Leer los comentarios
+                if self.carActual  == '\r' or self.carActual  == '\t' or self.carActual  == '\n' or self.carActual  == '\\' or self.carActual  == '%':
+                    self.abortar("Caracter ilegal en cadena")
+                self.siguiente()
+            lexema = self.fuente[posStrInicial : self.posActual] #Aqui queremos (Inicio, fin), NO (Inicio, fin)
+            token = Token(lexema, TipoToken.STRING)
+       
+       #los ID empiezan SIEMPRE con letra, luego pueden ser seguidos de numero y letras
+        elif self.carActual.isalpha(): #Keywords e Identificadores
+            posInicial = self.posActual
+            while self.asomar().isalnum():
+                self.siguiente()
+            lexema = self.fuente[posInicial : self.posActual+1]#Palabra a identificar 
+            keyword = Token.revisarSiKeywords(lexema) #Regresar lexema si es Keyword o regresar none
+            if keyword == None:
+                token = Token(lexema, TipoToken.ID) #Si no encontro en Keyword es ID
+            else:
+                token = Token(lexema, keyword) #Si no encontro, entonces es una keyword
+                
+            
               
         #Token desconocido        
         else:
@@ -135,7 +149,14 @@ class Lexico:
 class Token:
     def __init__(self, lexema, token):
         self.lexema = lexema
-        self.token = token #TipoToken ENUM     
+        self.token = token #TipoToken ENUM 
+    @staticmethod
+    def revisarSiKeywords(lexema):
+        #Usar la enumeracion: TipoToken.name(nombre); TipoToken.value(numeros)
+        for tipo in TipoToken:
+            if tipo.name == lexema and tipo.value > 100 and tipo.value < 200:
+                return lexema
+        return None    
     
 class TipoToken(enum.Enum):
     #Escribir todos los tokens
@@ -143,8 +164,8 @@ class TipoToken(enum.Enum):
     NEWLINE = 0 #\n
     NUMERO = 1 #si
     ID = 2
-    STRING = 3
-    #Keywords
+    STRING = 3#si
+    #Keywords 100>, pero <200
     LABEL = 101
     GOTO = 102
     PRINT = 103
