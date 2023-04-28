@@ -136,8 +136,6 @@ class Lexico:
             else:
                 token = Token(lexema, keyword) #Si no encontro, entonces es una keyword
                 
-            
-              
         #Token desconocido        
         else:
             self.abortar("El token '" + self.carActual + "' es desconocido")  
@@ -189,7 +187,5 @@ class TipoToken(enum.Enum):
     LTEQ = 209 #<= 2
     GT = 210 #> 2
     GTEQ = 211 #>= 2
-    
-
 def test():
     return print("import lexer.py :)")
