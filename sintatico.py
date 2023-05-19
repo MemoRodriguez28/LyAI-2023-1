@@ -38,3 +38,64 @@ class Sintatico:
     
     def abortar(self, mensaje):
         sys.exit("Error: " + mensaje)
+    
+    #------Reglas de producccion (Son 9 en total)--------
+    #programa ::= sentencia* (Cero o mas veces)
+    def programa(self):
+        #Checar que no sea un EOF
+        while not self.revisarToken(Token(TipoToken.EOF)):
+            self.sentencia()
+    
+    #sentencia ::= (‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ ) 
+    # | (‘PRINT’ (expr | STRING) ) | (
+    # ‘WHILE’ comparacion ‘REPEAT’ nl (sentencia)* ‘ENDWHILE’ ) 
+    # | (‘LABEL’ ID )
+    # | (‘GOTO’ ID ) 
+    # | (‘LET’ ID ‘=’ expr )
+    # | (‘INPUT’ ID )
+    def sentencia(self):
+        # ‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ 
+        if self.revisarToken(Token(TipoToken.IF)): #revisarToken (If/While) y regresa true
+            self.siguienteToken()
+            self.comparacion()
+            
+            self.match(Token(TipoToken.THEN)) #Si es pasa al siguiente; si no es, error
+            self.nl()
+            
+            #(sentencia)*
+            while not self.revisarToken(Token(TipoToken.EOF)):
+                self.sentencia()
+            
+            self.match(Token(TipoToken.ENDIF))
+            
+        #Newline final
+        self.nl()
+            
+    
+    #comparacion::= expr (opComp expr)+
+    def comparacion(self):
+        pass
+    
+    #expr::= termino ((‘+’ | ‘-‘ ) termino)*
+    def expr(self):
+        pass
+    
+    #termino::= unario ((‘*’ | ‘/‘ ) unario)+
+    def termino(self):
+        pass
+    
+    #unario::= ( ‘+’ | ‘-‘)? primario
+    def unario(self):
+        pass
+    
+    #primario::= NUMERO | ID
+    def primario(self):
+        pass
+    
+    #opComp::= ‘==’ | ‘!=’ | ‘>’ | ‘>=’ | ‘<’ | ‘<=’
+    def opComp(self):
+        pass
+    
+    #nl::= ‘\n’+
+    def nl(self):
+        pass
