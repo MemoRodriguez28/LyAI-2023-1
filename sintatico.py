@@ -43,7 +43,7 @@ class Sintatico:
     #programa ::= sentencia* (Cero o mas veces)
     def programa(self):
         #Checar que no sea un EOF
-        while not self.revisarToken(Token(TipoToken.EOF)):
+        while not self.revisarToken(TipoToken.EOF):
             self.sentencia()
     
     #sentencia ::= (‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ ) 
@@ -55,34 +55,92 @@ class Sintatico:
     # | (‘INPUT’ ID )
     def sentencia(self):
         # ‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ 
-        if self.revisarToken(Token(TipoToken.IF)): #revisarToken (If/While) y regresa true
+        if self.revisarToken(TipoToken.IF): #revisarToken (If/While) y regresa true
             self.siguienteToken()
             self.comparacion()
             
-            self.match(Token(TipoToken.THEN)) #Si es pasa al siguiente; si no es, error
+            self.match(TipoToken.THEN) #Si es pasa al siguiente; si no es, error
             self.nl()
-            
+
             #(sentencia)*
-            while not self.revisarToken(Token(TipoToken.EOF)):
+            while not self.revisarToken(TipoToken.EOF):
                 self.sentencia()
             
-            self.match(Token(TipoToken.ENDIF))
+            self.match(TipoToken.ENDIF)
+
+        #‘PRINT’  (expr | STRING) == 'PRINT' expr | 'PRINT' STRING
+        elif self.revisarToken(TipoToken.PRINT):
+            self.siguienteToken()
+            if self.revisarToken(TipoToken.STRING):
+                self.siguienteToken()
+            else:
+                self.expr()
+    
+        #‘WHILE’ comparación ‘REPEAT’ nl (sentencia)* ‘ENDWHILE’
+        elif self.revisarToken(TipoToken.WHILE):
+            self.siguienteToken()
+            self.comparacion()
+            self.match(TipoToken.REPEAT)
+            self.nl()
+            while not self.revisarToken(TipoToken.EOF): #sentencia*
+                self.sentencia()
+            self.match(TipoToken.ENDWHILE)
             
+        #'LABEL' ID
+        elif self.revisarToken(TipoToken.LABEL):
+            self.siguienteToken()
+            self.match(TipoToken.ID)
+            
+        #'GOTO' ID
+        elif self.revisarToken(TipoToken.GOTO):
+            self.siguienteToken()
+            self.match(TipoToken.ID)
+        
+        #'LET' ID '=' expr == ['LET' ID EQ expr]
+        elif self.revisarToken(TipoToken.LET):
+            self.siguienteToken()
+            self.match(TipoToken.ID)
+            self.match(TipoToken.EQ)
+            self.expr()
+        
+        #'INPUT' ID
+        elif self.revisarToken(TipoToken.INPUT):
+            self.siguienteToken()
+            self.match(TipoToken.ID)
+        
+        else:
+            self.abortar("Sentencia no válida en " + self.tokenActual.text + "(" + self.tokenActual.tipo.name + ")")
+               
         #Newline final
         self.nl()
             
     
     #comparacion::= expr (opComp expr)+
     def comparacion(self):
-        pass
+         self.expr()
+         if self.opComp(): #if True [1 vez]
+            self.siguienteToken()
+            self.expr()
+         else: #si no es un operador de comparación, entonces está mal
+            self.abortar("Se esperaba un operador de comparación en: " + self.tokenActual.text)
+        
+         while self.opComp(): #if True [más veces]
+            self.siguienteToken()
+            self.expr()
     
     #expr::= termino ((‘+’ | ‘-‘ ) termino)*
     def expr(self):
-        pass
+        self.termino()
+        while self.revisarToken(TipoToken.PLUS) or self.revisarToken(TipoToken.MINUS): #*
+            self.siguienteToken()
+            self.termino()
     
     #termino::= unario ((‘*’ | ‘/‘ ) unario)+
     def termino(self):
-        pass
+        self.unario()
+        while self.revisarToken(TipoToken.ASTERISK) or self.revisarToken(TipoToken.SLASH):
+            self.siguienteToken()
+            self.unario()
     
     #unario::= ( ‘+’ | ‘-‘)? primario
     def unario(self):
@@ -94,7 +152,11 @@ class Sintatico:
     
     #opComp::= ‘==’ | ‘!=’ | ‘>’ | ‘>=’ | ‘<’ | ‘<=’
     def opComp(self):
-        pass
+         if (self.revisarToken(TipoToken.EQEQ) or self.revisarToken(TipoToken.NOTEQ)
+            or self.revisarToken(TipoToken.GT) or self.revisarToken(TipoToken.GTEQ) 
+            or self.revisarToken(TipoToken.LT) or self.revisarToken(TipoToken.LTEQ)):
+            return True
+        #return self.revisarToken(TipoToken.EQEQ) or ...
     
     #nl::= ‘\n’+
     def nl(self):
