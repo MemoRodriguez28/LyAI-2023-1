@@ -13,26 +13,26 @@ class Sintatico:
     
     #Regresar true si el token actual es igual (del mismo tipo)    
     def revisarToken(self, tipo):
-        if (tipo == self.tokenActual.tipo):
+        if (tipo == self.tokenActual.token):
             return True
-        #return tipo == self.tokenActual.tipo
+        #return tipo == self.tokenActual.token
         
     #Regresar true si el token siguiente es igual (del mismo tipo)
     def revisarAsomar(self, tipo):
-        if (tipo == self.asomarToken.tipo):
+        if (tipo == self.asomarToken.token):
             return True
         
     #Revisar si el tipo de token es el esperado     
     def match(self, tipo):
         if not self.revisarToken(tipo): #Si no es el tipo que se estaba esperando
-            self.abortar("Se esperaba: " + tipo.name + ", se obtuvo " + self.tokenActual.tipo.name)
+            self.abortar("Se esperaba: " + tipo.name + ", se obtuvo " + self.tokenActual.token.name)
         #Si esñ el tipo que se esperaba
         self.siguienteToken()
     
     #Pasar al siguiente token
-    def siguienteToken(self, tipo):
+    def siguienteToken(self):
         #Remplazara el token actual por el siguiente
-        self.tokenActual = self.asomarToken(tipo)
+        self.tokenActual = self.asomarToken
         #Obtiene el token que sigue en el codigo
         self.asomarToken = self.lexico.getToken()
     
@@ -42,6 +42,7 @@ class Sintatico:
     #------Reglas de producccion (Son 9 en total)--------
     #programa ::= sentencia* (Cero o mas veces)
     def programa(self):
+        print("Programa")
         #Checar que no sea un EOF
         while not self.revisarToken(TipoToken.EOF):
             self.sentencia()
@@ -54,6 +55,7 @@ class Sintatico:
     # | (‘LET’ ID ‘=’ expr )
     # | (‘INPUT’ ID )
     def sentencia(self):
+        print("Sentencia")
         # ‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ 
         if self.revisarToken(TipoToken.IF): #revisarToken (If/While) y regresa true
             self.siguienteToken()
@@ -109,7 +111,7 @@ class Sintatico:
             self.match(TipoToken.ID)
         
         else:
-            self.abortar("Sentencia no válida en " + self.tokenActual.text + "(" + self.tokenActual.tipo.name + ")")
+            self.abortar("Sentencia no válida en " + self.tokenActual.lexema + "(" + self.tokenActual.token.name + ")")
                
         #Newline final
         self.nl()
@@ -117,12 +119,13 @@ class Sintatico:
     
     #comparacion::= expr (opComp expr)+
     def comparacion(self):
+         print("comparacion")
          self.expr()
          if self.opComp(): #if True [1 vez]
             self.siguienteToken()
             self.expr()
-         else: #si no es un operador de comparación, entonces está mal
-            self.abortar("Se esperaba un operador de comparación en: " + self.tokenActual.text)
+         else: #si no es un operador de comparación, mostrara error
+            self.abortar("Se esperaba un operador de comparación en: " + self.tokenActual.lexema)
         
          while self.opComp(): #if True [más veces]
             self.siguienteToken()
@@ -130,27 +133,36 @@ class Sintatico:
     
     #expr::= termino ((‘+’ | ‘-‘ ) termino)*
     def expr(self):
+        print("Expresion")
         self.termino()
-        while self.revisarToken(TipoToken.PLUS) or self.revisarToken(TipoToken.MINUS): #*
+        while self.revisarToken(TipoToken.PLUS) or self.revisarToken(TipoToken.MINUS):
             self.siguienteToken()
             self.termino()
     
     #termino::= unario ((‘*’ | ‘/‘ ) unario)+
     def termino(self):
+        print("Termino")
         self.unario()
         while self.revisarToken(TipoToken.ASTERISK) or self.revisarToken(TipoToken.SLASH):
             self.siguienteToken()
             self.unario()
     
-    #unario::= ( ‘+’ | ‘-‘)? primario
+    #unario::= ( ‘+’ | ‘-‘)? primario (cero o una vez)
     def unario(self):
-        pass
+        print("Unario")
+        if self.revisarToken(TipoToken.PLUS) or self.revisarToken(TipoToken.MINUS): #? o es + o -
+            self.siguienteToken()
+        self.primario()
     
     #primario::= NUMERO | ID
     def primario(self):
-        pass
+        print("Primario")
+        if self.revisarToken(TipoToken.NUMERO) or self.revisarToken(TipoToken.ID): #Numero o ID
+            self.siguienteToken()
+        else: 
+            self.abortar("Token inesperado en: " + self.tokenActual.lexema)
     
-    #opComp::= ‘==’ | ‘!=’ | ‘>’ | ‘>=’ | ‘<’ | ‘<=’
+    #opComp::= ‘==’ | ‘!=’ | ‘>’ | ‘>=’ | ‘<’ | ‘<=’ Compara la operacion con su respectivo simbolos
     def opComp(self):
          if (self.revisarToken(TipoToken.EQEQ) or self.revisarToken(TipoToken.NOTEQ)
             or self.revisarToken(TipoToken.GT) or self.revisarToken(TipoToken.GTEQ) 
@@ -158,6 +170,10 @@ class Sintatico:
             return True
         #return self.revisarToken(TipoToken.EQEQ) or ...
     
-    #nl::= ‘\n’+
+    #nl::= ‘\n’+ (Uno o mas veces)
     def nl(self):
-        pass
+        print("NL")
+        self.match(TipoToken.NEWLINE) #Tiene que estar minimo una vez
+        while self.revisarToken(TipoToken.NEWLINE):
+            self.siguienteToken()
+            
