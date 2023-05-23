@@ -11,11 +11,14 @@ def main():
         fuente = archivo.read()
 
 
-    lexico = Lexico(fuente)
-    sintatico = Sintatico(lexico)
+    lexico = Lexico(fuente) #Analizador lexico
+    sintatico = Sintatico(lexico) #Analizador sintatico
     
     sintatico.programa() #Empezar el analizador sintatico
     print("Analisis completo.")
+    
+    
+main()
 
 
 
