@@ -1,1 +1,4 @@
-PRINT "Hellow world!"
+LET a = b * 3 + 2
+IF a > 0 THEN
+    PRINT "Mayor"
+ENDIF
