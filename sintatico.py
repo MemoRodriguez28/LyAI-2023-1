@@ -58,6 +58,7 @@ class Sintatico:
         print("Sentencia")
         # ‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ 
         if self.revisarToken(TipoToken.IF): #revisarToken (If/While) y regresa true
+            print("Sentencia-If")
             self.siguienteToken()
             self.comparacion()
             
@@ -65,13 +66,14 @@ class Sintatico:
             self.nl()
 
             #(sentencia)*
-            while not self.revisarToken(TipoToken.EOF):
+            while not self.revisarToken(TipoToken.ENDIF):
                 self.sentencia()
             
             self.match(TipoToken.ENDIF)
 
         #‘PRINT’  (expr | STRING) == 'PRINT' expr | 'PRINT' STRING
         elif self.revisarToken(TipoToken.PRINT):
+            print("Sentecia-Print")
             self.siguienteToken()
             if self.revisarToken(TipoToken.STRING):
                 self.siguienteToken()
@@ -80,26 +82,30 @@ class Sintatico:
     
         #‘WHILE’ comparación ‘REPEAT’ nl (sentencia)* ‘ENDWHILE’
         elif self.revisarToken(TipoToken.WHILE):
+            print("Sentencia-While")
             self.siguienteToken()
             self.comparacion()
             self.match(TipoToken.REPEAT)
             self.nl()
-            while not self.revisarToken(TipoToken.EOF): #sentencia*
+            while not self.revisarToken(TipoToken.ENDWHILE): #sentencia*
                 self.sentencia()
             self.match(TipoToken.ENDWHILE)
             
         #'LABEL' ID
         elif self.revisarToken(TipoToken.LABEL):
+            print("Sentencia-Label")
             self.siguienteToken()
             self.match(TipoToken.ID)
             
         #'GOTO' ID
         elif self.revisarToken(TipoToken.GOTO):
+            print("Sentencia-Goto")
             self.siguienteToken()
             self.match(TipoToken.ID)
         
         #'LET' ID '=' expr == ['LET' ID EQ expr]
         elif self.revisarToken(TipoToken.LET):
+            print("Sentencia-Let")
             self.siguienteToken()
             self.match(TipoToken.ID)
             self.match(TipoToken.EQ)
@@ -107,6 +113,7 @@ class Sintatico:
         
         #'INPUT' ID
         elif self.revisarToken(TipoToken.INPUT):
+            print("Sentencia-Input")
             self.siguienteToken()
             self.match(TipoToken.ID)
         
@@ -119,7 +126,7 @@ class Sintatico:
     
     #comparacion::= expr (opComp expr)+
     def comparacion(self):
-         print("comparacion")
+         print("Comparacion")
          self.expr()
          if self.opComp(): #if True [1 vez]
             self.siguienteToken()
