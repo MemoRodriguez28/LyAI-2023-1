@@ -73,7 +73,7 @@ class Sintatico:
 
         #‘PRINT’  (expr | STRING) == 'PRINT' expr | 'PRINT' STRING
         elif self.revisarToken(TipoToken.PRINT):
-            print("Sentecia-Print")
+            print("Sentencia-Print")
             self.siguienteToken()
             if self.revisarToken(TipoToken.STRING):
                 self.siguienteToken()
