@@ -1,7 +1,9 @@
 INPUT b
 LET a = b * 3 + 2
+GOTO etiq
+PRINT "Este print no se corre"
+LABEL etiq
 IF a > 0 THEN
 	PRINT "Mayor"
 	PRINT a
-	
 ENDIF
