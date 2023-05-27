@@ -1,9 +1,9 @@
-INPUT b
+LET b = 0
 LET a = b * 3 + 2
 GOTO etiq
-PRINT "Este print no se corre"
+PRINT "Print error"
 LABEL etiq
 IF a > 0 THEN
-	PRINT "Mayor"
+	PRINT "mayor"
 	PRINT a
 ENDIF
