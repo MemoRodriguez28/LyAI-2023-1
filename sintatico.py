@@ -65,10 +65,9 @@ class Sintatico:
     # | (‘LET’ ID ‘=’ expr )
     # | (‘INPUT’ ID )
     def sentencia(self):
-        print("SENTENCIA")
         # ‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ 
         if self.revisarToken(TipoToken.IF): #revisarToken (If/While) y regresa true
-            print("SENTENCIA-IF")
+            print("SENTENCIA IF")
             self.siguienteToken()
             self.comparacion()
             
@@ -83,7 +82,7 @@ class Sintatico:
 
         #‘PRINT’  (expr | STRING) == 'PRINT' expr | 'PRINT' STRING
         elif self.revisarToken(TipoToken.PRINT):
-            print("SENTENCIA-PRINT")
+            print("SENTENCIA PRINT")
             self.siguienteToken()
             if self.revisarToken(TipoToken.STRING):
                 self.siguienteToken()
@@ -92,7 +91,7 @@ class Sintatico:
     
         #‘WHILE’ comparación ‘REPEAT’ nl (sentencia)* ‘ENDWHILE’
         elif self.revisarToken(TipoToken.WHILE):
-            print("SENTENCIA-WHILE")
+            print("SENTENCIA WHILE")
             self.siguienteToken()
             self.comparacion()
             self.match(TipoToken.REPEAT)
@@ -103,8 +102,9 @@ class Sintatico:
             
         #'LABEL' ID (Etiqueta)
         elif self.revisarToken(TipoToken.LABEL):
-            print("SENTENCIA-LABEL")
+            print("SENTENCIA LABEL")
             self.siguienteToken()
+            
             #Checar que la etiqueta no exista ya 
             if self.tokenActual.lexema in self.labelsDeclaradas: #ID
                 self.abortar("Ese Label (Etiqueta) ya existe: " + self.tokenActual.lexema)
@@ -113,14 +113,14 @@ class Sintatico:
             
         #'GOTO' ID (salto)
         elif self.revisarToken(TipoToken.GOTO):
-            print("SENTENCIA-GOTO")
+            print("SENTENCIA GOTO")
             self.siguienteToken()
             self.labelsGoto.add(self.tokenActual.lexema) #Agregando el salto
             self.match(TipoToken.ID)
         
         #'LET' ID '=' expr == ['LET' ID EQ expr]
         elif self.revisarToken(TipoToken.LET):
-            print("SENTENCIA-LET")
+            print("SENTENCIA LET")
             self.siguienteToken()
             
             if self.tokenActual.lexema not in self.variables: #Revisa si aun no se declara esa variable
@@ -132,7 +132,7 @@ class Sintatico:
         
         #'INPUT' ID
         elif self.revisarToken(TipoToken.INPUT):
-            print("SENTENCIA-INPUT")
+            print("SENTENCIA INPUT")
             self.siguienteToken()
             
             if self.tokenActual.lexema not in self.variables: #Revisa si aun no se declara esa variable
@@ -187,7 +187,7 @@ class Sintatico:
     #primario::= NUMERO | ID
     def primario(self):
         print("PRIMARIO")
-        if self.revisarToken(TipoToken.NUMERO) or self.revisarToken(TipoToken.ID): #Numero o ID
+        if self.revisarToken(TipoToken.NUMERO): #Numero o ID
             self.siguienteToken()
         elif self.revisarToken(TipoToken.ID):
             if self.tokenActual.lexema not in self.variables:
