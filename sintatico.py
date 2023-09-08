@@ -1,5 +1,8 @@
 import sys
 from lexico import *
+from semantico import *
+
+semantico = Semantico()
 
 
 class Sintatico:
