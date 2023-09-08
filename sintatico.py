@@ -9,9 +9,9 @@ class Sintatico:
     def __init__(self, lexico):
         self.lexico = lexico
         
-        self.variables = set() #Variables
-        self.labelsDeclaradas = set() #Labels
-        self.labelsGoto = set() #Labels a las que se a saltado (GOTO)
+        #self.variables = set() #Variables
+        #self.labelsDeclaradas = set() #Labels
+        #self.labelsGoto = set() #Labels a las que se a saltado (GOTO)
         
         self.tokenActual = None #Este es el token actual
         self.asomarToken = None #Este es el token que sigue (pero sin que se guarde)
@@ -55,9 +55,7 @@ class Sintatico:
         while not self.revisarToken(TipoToken.EOF):
             self.sentencia()
         
-        for etiqueta in self.labelsGoto:
-            if etiqueta not in self.labelsDeclaradas:
-                self.abortar("Se intenta saltar a una etiqueta que no esta declarada " + etiqueta)
+        semantico.revisarLabelsGoto()
             
     
     #sentencia ::= (‘IF’ comparación ‘THEN’ nl (sentencia)* ‘ENDIF’ ) 
@@ -109,16 +107,17 @@ class Sintatico:
             self.siguienteToken()
             
             #Checar que la etiqueta no exista ya 
-            if self.tokenActual.lexema in self.labelsDeclaradas: #ID
-                self.abortar("Ese Label (Etiqueta) ya existe: " + self.tokenActual.lexema)
-            self.labelsDeclaradas.add(self.tokenActual.lexema) #Agregando las labels declaradas
+            semantico.revisarLabelDeclarada(self.tokenActual.lexema)
+            
+            semantico.agregarLabelDeclarada(self.tokenActual.lexema)    
+            
             self.match(TipoToken.ID)
             
         #'GOTO' ID (salto)
         elif self.revisarToken(TipoToken.GOTO):
             print("SENTENCIA GOTO")
             self.siguienteToken()
-            self.labelsGoto.add(self.tokenActual.lexema) #Agregando el salto
+            semantico.agregarLabelGoto(self.tokenActual.lexema)
             self.match(TipoToken.ID)
         
         #'LET' ID '=' expr == ['LET' ID EQ expr]
@@ -126,8 +125,7 @@ class Sintatico:
             print("SENTENCIA LET")
             self.siguienteToken()
             
-            if self.tokenActual.lexema not in self.variables: #Revisa si aun no se declara esa variable
-                self.variables.add(self.tokenActual.lexema)
+            semantico.agregarVariable(self.tokenActual.lexema)
                 
             self.match(TipoToken.ID)
             self.match(TipoToken.EQ)
@@ -138,8 +136,7 @@ class Sintatico:
             print("SENTENCIA INPUT")
             self.siguienteToken()
             
-            if self.tokenActual.lexema not in self.variables: #Revisa si aun no se declara esa variable
-                self.variables.add(self.tokenActual.lexema)
+            semantico.agregarVariable(self.tokenActual.lexema)
                 
             self.match(TipoToken.ID)
         
@@ -193,8 +190,7 @@ class Sintatico:
         if self.revisarToken(TipoToken.NUMERO): #Numero o ID
             self.siguienteToken()
         elif self.revisarToken(TipoToken.ID):
-            if self.tokenActual.lexema not in self.variables:
-                self.abortar("Referenciando una variable que no ha sido declarada: " + self.tokenActual.lexema)
+            semantico.revisarVariable(self.tokenActual.lexema)
             self.siguienteToken()
         else: 
             self.abortar("Token inesperado en: " + self.tokenActual.lexema)
