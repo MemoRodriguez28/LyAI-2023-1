@@ -23,9 +23,12 @@ class Semantico:
             self.abortar("Ese Label (Etiqueta) ya existe: " + etiqueta)
                 
     def agregarLabelDeclarada(self, etiqueta):
-        if etiqueta not in self.labelsDeclaradas:
-            self.variables.add(etiqueta)
+        self.labelsDeclaradas.add(etiqueta) #Agregando las labels declaradas
     
-    def revisarLabelGoto(self, etiqueta):
-        if etiqueta in self.labelsGoto: 
-            self.abortar("Ese Label (Etiqueta) ya existe: " + etiqueta)
+    def revisarLabelsGoto(self):
+       for etiqueta in self.labelsGoto:
+            if etiqueta not in self.labelsDeclaradas:
+                self.abortar("Se intenta saltar a una etiqueta que no esta declarada " + etiqueta)
+    
+    def agregarLabelGoto(self, etiqueta):
+        self.labelsGoto.add(etiqueta) #Agregando el salto
