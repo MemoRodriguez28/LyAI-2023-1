@@ -7,19 +7,25 @@ class Semantico:
         self.labelsDeclaradas = set() #Labels
         self.labelsGoto = set() #Labels a las que se a saltado (GOTO)
         
-        def abortar(self, mensaje):
-            sys.exit("Error: " + mensaje)
-        #def revisarLabel(TipoToken.LABEL):
-            #if self.tokenActual.lexema in self.labelsDeclaradas: #ID
-                #self.abortar("Ese Label (Etiqueta) ya existe: " + self.tokenActual.lexema)
-        #def agregarlabel():
-            #self.labelsDeclaradas.add(self.tokenActual.lexema) #Agregando las labels declaradas
-            #self.match(TipoToken.ID)
-        
-        
-        
-        
-        def revisarVariable(self, variable):
-            pass
-        def agregarVariable(self, variable):
-            pass
+    def abortar(self, mensaje):
+        sys.exit("Error: " + mensaje)
+
+    def revisarVariable(self, variable):
+        if variable not in self.variables:
+            self.abortar("La variable no ha sido declarada: " + variable)
+            
+    def agregarVariable(self, variable):
+        if variable not in self.variables:
+             self.variables.add(variable)
+    
+    def revisarLabelDeclarada(self, etiqueta):
+        if etiqueta in self.labelsDeclaradas: 
+            self.abortar("Ese Label (Etiqueta) ya existe: " + etiqueta)
+                
+    def agregarLabelDeclarada(self, etiqueta):
+        if etiqueta not in self.labelsDeclaradas:
+            self.variables.add(etiqueta)
+    
+    def revisarLabelGoto(self, etiqueta):
+        if etiqueta in self.labelsGoto: 
+            self.abortar("Ese Label (Etiqueta) ya existe: " + etiqueta)
