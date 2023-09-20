@@ -108,7 +108,6 @@ class Sintatico:
             
             #Checar que la etiqueta no exista ya 
             semantico.revisarLabelDeclarada(self.tokenActual.lexema)
-            
             semantico.agregarLabelDeclarada(self.tokenActual.lexema)    
             
             self.match(TipoToken.ID)
@@ -135,9 +134,7 @@ class Sintatico:
         elif self.revisarToken(TipoToken.INPUT):
             print("SENTENCIA INPUT")
             self.siguienteToken()
-            
             semantico.agregarVariable(self.tokenActual.lexema)
-                
             self.match(TipoToken.ID)
         
         else:
