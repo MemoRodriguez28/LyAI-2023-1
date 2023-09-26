@@ -1,5 +1,4 @@
 import sys
-from lexico import *
 
 class Semantico:
     def __init__(self):
