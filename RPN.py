@@ -1,5 +1,5 @@
 def RPN(infija): #Se recibe un string
-    operadores = {'+': 1, '-': 1, '*': 2, '/': 2, '(': 0, ')': 0}
+    operadores = {'+': 1, '-': 1, '*': 2, '/': 2, '(': 0, ')': 0, '=':0}
     stack = [] #Stack de operadores
     postfija = ""
     
@@ -24,4 +24,4 @@ def RPN(infija): #Se recibe un string
     return postfija
 
 
-print(RPN("a+b*c"))
+print(RPN("x=(a+b)*c-(d+e)"))
